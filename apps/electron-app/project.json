@@ -1,0 +1,45 @@
+{
+  "name": "electron-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/electron-app/src",
+  "projectType": "application",
+  "implicitDependencies": ["pos"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "start"
+      },
+      "dependsOn": [
+        {
+          "target": "serve",
+          "projects": ["pos"]
+        }
+      ]
+    },
+    "build": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "package"
+      },
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["pos"]
+        }
+      ]
+    },
+    "make": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "make"
+      },
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["pos"]
+        }
+      ]
+    }
+  }
+}

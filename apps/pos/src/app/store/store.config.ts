@@ -3,9 +3,9 @@ import { NgxsDevtoolsOptions } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginOptions } from '@ngxs/logger-plugin';
 
 import { AuthState } from './auth/auth.state';
-import { DashboardStates } from './dashboard';
+import { DraftOrderState } from './draft-order/draft-order.state';
 
-export const STATES_MODULES = [AuthState, ...DashboardStates];
+export const STATES_MODULES = [AuthState, DraftOrderState];
 
 export const OPTIONS_CONFIG: Partial<NgxsConfig> = {
   /**

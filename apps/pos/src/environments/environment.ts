@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  MEDUSA_PUBLISHABLE_KEY: "pk_73169278116c6449260190252a320391f8feb25ee2bea82aa6f475b3d82c485e",
+  MEDUSA_PUBLISHABLE_KEY: "pk_7874e153319334c3a8207a59a3e3dbc23bd698e15ab3425671bdae34b4fb51da",
   MEDUSA_API_BASE_PATH: "http://localhost:9000",
   MEDUSA_BACKEND_URL: "http://localhost:9000",
   STRIPE_PUBLISHABLE_KEY: "",

@@ -5,6 +5,8 @@
   "scripts": {},
   "private": true,
   "devDependencies": {
+    "@nx/eslint": "23.1.0",
+    "@nx/jest": "23.1.0",
     "@nx/js": "23.1.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",

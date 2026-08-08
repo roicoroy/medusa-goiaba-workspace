@@ -6,9 +6,8 @@ export interface AuthenticationStateModel {
   id: string;
   firstName: string;
   lastName: string;
-  fullName: string;
   email: string;
-  roles: string[];
+  token: string;
 }
 
 @State<AuthenticationStateModel>({
@@ -17,9 +16,8 @@ export interface AuthenticationStateModel {
     id: '',
     firstName: '',
     lastName: '',
-    fullName: '',
     email: '',
-    roles: []
+    token: ''
   }
 })
 @Injectable()
