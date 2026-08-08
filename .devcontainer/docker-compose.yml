@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api:
+    image: caxetaworkspace:latest
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: medusa_pos_api
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_NAME=medusa_pos
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: caxeta_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: caxetadb
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
