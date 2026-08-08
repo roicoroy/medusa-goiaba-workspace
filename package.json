@@ -15,8 +15,5 @@
     "prettier": "^3.8.1",
     "tslib": "^2.3.0",
     "typescript": "~6.0.3"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }
