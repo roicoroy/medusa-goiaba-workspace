@@ -8,7 +8,6 @@ import {
   mapRuntimeErrorSeverity,
 } from '../logging-policy.helper';
 import { environment } from '../../../../environments/environment';
-import { ErrorActions } from '../../../store/errors/errors.actions';
 
 const LOGTAG = '[GlobalErrorHandlerService]';
 
@@ -123,6 +122,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
     const severity = mapRuntimeErrorSeverity(error);
 
     // Dispatch to ErrorState
+    /*
     this.store.dispatch(
       new ErrorActions.LogError({
         type: mapRuntimeErrorCategory(error),
@@ -132,6 +132,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
         timestamp: new Date().toISOString(),
       }),
     );
+    */
   }
 
   private getMessageFromUnknownError(error: any): string {

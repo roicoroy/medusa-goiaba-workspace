@@ -8,7 +8,7 @@ import {
   DebugEventKind,
   DebugEventLevel,
 } from '../../../store/debug/debug.actions';
-
+// Force recompile
 type DebugLogOptions = {
   kind?: DebugEventKind;
   level?: DebugEventLevel;

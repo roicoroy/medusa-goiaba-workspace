@@ -8,6 +8,18 @@ export const environment = {
   MEDUSA_API_BASE_PATH: "http://localhost:9000",
   MEDUSA_BACKEND_URL: "http://localhost:9000",
   STRIPE_PUBLISHABLE_KEY: "",
+  errorLogging: {
+    enabled: true,
+    maxSize: 100,
+    logStackTraces: true,
+    minSeverity: 'low' as const,
+  },
+  debugLogging: {
+    enabled: true,
+    maxSize: 250,
+    echoToConsole: true,
+    networkTracing: true,
+  },
 };
 
 /*

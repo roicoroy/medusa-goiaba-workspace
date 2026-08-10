@@ -7,6 +7,8 @@ export interface ProductVariant {
   id: string;
   title: string;
   inventory_quantity: number;
+  barcode?: string;
+  sku?: string;
   prices: { amount: number; currency_code: string }[];
 }
 
@@ -24,7 +26,8 @@ export class ProductsApiService {
   private readonly apiUrl = `${environment.MEDUSA_API_BASE_PATH}/store/products`;
 
   getProducts(): Observable<Product[]> {
-    return this.http.get<{ products: Product[] }>(this.apiUrl).pipe(
+    const urlWithFields = `${this.apiUrl}?fields=+variants.barcode,+variants.sku`;
+    return this.http.get<{ products: Product[] }>(urlWithFields).pipe(
       map(response => response.products)
     );
   }

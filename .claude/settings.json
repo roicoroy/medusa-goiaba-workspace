@@ -10,9 +10,15 @@
   "enabledPlugins": {
     "nx@nx-claude-plugins": true
   },
-  "sandbox": {
-    "network": {
-      "allowedDomains": ["www.google-analytics.com"]
+  "mcpServers": {
+    "medusa": {
+      "url": "https://docs.medusajs.com/mcp"
+    },
+    "sandbox": {
+      "network": {
+        "allowedDomains": [
+          "www.google-analytics.com"
+        ]
+      }
     }
   }
-}

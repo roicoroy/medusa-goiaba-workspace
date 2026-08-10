@@ -10,6 +10,8 @@ import { MedusaApiInterceptor } from './app/shared/api/medusa-api.interceptor';
 import { provideStore } from '@ngxs/store';
 import { AuthState } from './app/store/auth/auth.state';
 import { DraftOrderState } from './app/store/draft-order/draft-order.state';
+import { ErrorHandler } from '@angular/core';
+import { GlobalErrorHandlerService } from './app/shared/errors/global-error-handler/global-error-handler.service';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -18,6 +20,7 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: MedusaApiInterceptor, multi: true },
-    provideStore([AuthState, DraftOrderState])
+    provideStore([AuthState, DraftOrderState]),
+    { provide: ErrorHandler, useClass: GlobalErrorHandlerService }
   ],
 });
