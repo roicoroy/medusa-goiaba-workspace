@@ -40,4 +40,16 @@ export class CartFacade {
     initializeCart() {
         this.store.dispatch(new CartActions.InitializeCart());
     }
+
+    addLineItem(variantId: string, quantity: number = 1) {
+        this.store.dispatch(new CartActions.AddLineItem(variantId, quantity));
+    }
+
+    removeLineItem(lineItemId: string) {
+        this.store.dispatch(new CartActions.RemoveLineItem(lineItemId));
+    }
+
+    updateItemQuantity(lineItemId: string, quantity: number) {
+        this.store.dispatch(new CartActions.UpdateItemQuantity(lineItemId, quantity));
+    }
 }

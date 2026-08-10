@@ -6,13 +6,13 @@ export namespace CartActions {
     constructor(public regionId?: string) {}
   }
 
-  export class AddItem {
-    static readonly type = '[Cart] Add Item';
-    constructor(public product: Product, public quantity: number = 1) {}
+  export class AddLineItem {
+    static readonly type = '[Cart] Add Line Item';
+    constructor(public variantId: string, public quantity: number = 1) {}
   }
 
-  export class RemoveItem {
-    static readonly type = '[Cart] Remove Item';
+  export class RemoveLineItem {
+    static readonly type = '[Cart] Remove Line Item';
     constructor(public lineItemId: string) {}
   }
 

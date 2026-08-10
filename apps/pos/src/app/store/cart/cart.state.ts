@@ -64,20 +64,15 @@ export class CartState {
     );
   }
 
-  @Action(CartActions.AddItem)
-  addItem(ctx: StateContext<CartStateModel>, action: CartActions.AddItem) {
+
+  @Action(CartActions.AddLineItem)
+  addLineItem(ctx: StateContext<CartStateModel>, { variantId, quantity }: CartActions.AddLineItem) {
     const state = ctx.getState();
-    const cartId = state.cart?.id;
-    
-    if (!cartId) {
-      // Option B approach: if no cart exists yet, we can create one on the fly, 
-      // but for simplicity we should expect the user to have clicked 'Create Cart' first.
-      ctx.patchState({ error: 'No active cart. Please create a cart first.' });
-      return;
-    }
+    if (!state.cart?.id) return;
 
     ctx.patchState({ loading: true, error: null });
-    return this.medusaApi.addCartLineItem(cartId, action.product.variants?.[0]?.id || '', action.quantity).pipe(
+    
+    return this.medusaApi.addCartLineItem(state.cart.id, variantId, quantity).pipe(
       tap((res: any) => {
         ctx.patchState({
           cart: res.cart,
@@ -85,49 +80,41 @@ export class CartState {
         });
       }),
       catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
+        ctx.patchState({ error: error.message, loading: false });
         return throwError(() => error);
       })
     );
   }
 
-  @Action(CartActions.RemoveItem)
-  removeItem(ctx: StateContext<CartStateModel>, action: CartActions.RemoveItem) {
+  @Action(CartActions.RemoveLineItem)
+  removeLineItem(ctx: StateContext<CartStateModel>, { lineItemId }: CartActions.RemoveLineItem) {
     const state = ctx.getState();
-    const cartId = state.cart?.id;
-    
-    if (!cartId) return;
+    if (!state.cart?.id) return;
 
     ctx.patchState({ loading: true, error: null });
-    return this.medusaApi.deleteCartLineItem(cartId, action.lineItemId).pipe(
+
+    return this.medusaApi.deleteCartLineItem(state.cart.id, lineItemId).pipe(
       tap((res: any) => {
-        // DELETE might return the updated cart or just success. 
-        // We assume it returns the parent cart in res.parent or res.cart, 
-        // otherwise we might need to fetch it again.
         ctx.patchState({
-          cart: res.parent || res.cart || state.cart,
+          cart: res.cart,
           loading: false
         });
-        
-        // If it doesn't return the full cart, we would want to retrieve it:
-        // this.store.dispatch(new RefreshCart(cartId))
       }),
       catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
+        ctx.patchState({ error: error.message, loading: false });
         return throwError(() => error);
       })
     );
   }
 
   @Action(CartActions.UpdateItemQuantity)
-  updateItemQuantity(ctx: StateContext<CartStateModel>, action: CartActions.UpdateItemQuantity) {
+  updateItemQuantity(ctx: StateContext<CartStateModel>, { lineItemId, quantity }: CartActions.UpdateItemQuantity) {
     const state = ctx.getState();
-    const cartId = state.cart?.id;
-    
-    if (!cartId) return;
+    if (!state.cart?.id) return;
 
     ctx.patchState({ loading: true, error: null });
-    return this.medusaApi.updateCartLineItem(cartId, action.lineItemId, action.quantity).pipe(
+
+    return this.medusaApi.updateCartLineItem(state.cart.id, lineItemId, quantity).pipe(
       tap((res: any) => {
         ctx.patchState({
           cart: res.cart,
@@ -135,7 +122,7 @@ export class CartState {
         });
       }),
       catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
+        ctx.patchState({ error: error.message, loading: false });
         return throwError(() => error);
       })
     );
