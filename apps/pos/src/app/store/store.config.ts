@@ -2,13 +2,14 @@ import { NgxsConfig } from '@ngxs/store';
 import { NgxsDevtoolsOptions } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginOptions } from '@ngxs/logger-plugin';
 
-import { DraftOrderState } from './draft-order/draft-order.state';
 import { CartState } from './cart/cart.state';
+import { ProductsState } from './products/products.state';
 
-export const STATES_MODULES = [CartState, DraftOrderState];
+export const STATES_MODULES = [CartState, ProductsState];
 
 export const STORAGE_MODULES = [
-  'cart'
+  'cart',
+  'products'
 ];
 
 export const OPTIONS_CONFIG: Partial<NgxsConfig> = {

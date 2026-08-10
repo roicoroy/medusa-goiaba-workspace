@@ -149,4 +149,30 @@ export class CartState {
       error: null
     });
   }
+
+  @Action(CartActions.InitializeCart)
+  initializeCart(ctx: StateContext<CartStateModel>) {
+    const state = ctx.getState();
+    const cartId = state.cart?.id;
+
+    if (!cartId) {
+      return ctx.dispatch(new CartActions.CreateCart());
+    }
+
+    ctx.patchState({ loading: true, error: null });
+    
+    return this.medusaApi.retrieveCart(cartId).pipe(
+      tap((res: any) => {
+        ctx.patchState({
+          cart: res.cart,
+          loading: false
+        });
+      }),
+      catchError(error => {
+        // If retrieving fails (e.g. 404), the local cart is invalid/expired
+        ctx.dispatch(new CartActions.ClearCart());
+        return throwError(() => error);
+      })
+    );
+  }
 }

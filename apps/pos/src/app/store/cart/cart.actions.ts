@@ -24,4 +24,8 @@ export namespace CartActions {
   export class ClearCart {
     static readonly type = '[Cart] Clear Cart';
   }
+
+  export class InitializeCart {
+    static readonly type = '[Cart] Initialize Cart';
+  }
 }

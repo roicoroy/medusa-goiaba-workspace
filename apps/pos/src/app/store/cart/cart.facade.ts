@@ -36,4 +36,8 @@ export class CartFacade {
     createCart() {
         this.store.dispatch(new CartActions.CreateCart());
     }
+
+    initializeCart() {
+        this.store.dispatch(new CartActions.InitializeCart());
+    }
 }

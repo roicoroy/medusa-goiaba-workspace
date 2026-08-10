@@ -1,0 +1,71 @@
+.pos-grid {
+  height: 85%;
+  position: relative;
+  top: 6%;
+  background: var(--ion-color-step-50, #f4f5f8); // Light background behind the grid
+}
+
+.pos-row {
+  height: 100%;
+}
+
+.pos-col-left,
+.pos-col-right {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Fix height so both columns stretch evenly
+  padding: 12px !important;
+  gap: 12px;
+}
+
+// Elegant Box Styling
+.wire-box {
+  background: #ffffff;
+  border: 1px solid var(--ion-color-step-150, #d7d8da);
+  border-radius: 12px; // Modern rounded corners
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); // Subtle shadow
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+// Proportions (Left Side)
+.top-left-box {
+  flex: 3; // roughly 75% height
+}
+
+.bottom-left-box {
+  flex: 1; // roughly 25% height
+}
+
+// Proportions (Right Side)
+.top-right-box {
+  flex: 1; // roughly 25% height
+}
+
+.middle-right-box {
+  flex: 3; // fill the rest of the height
+}
+
+// Footer Styling
+.pos-footer {
+  border-top: 1px solid #e0e0e0;
+  padding: 8px;
+  background: var(--ion-color-light);
+}
+
+.weight-display {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ion-color-dark);
+}
+
+.footer-pay-button {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+  height: 56px;
+}

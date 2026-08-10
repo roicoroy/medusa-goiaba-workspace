@@ -8,24 +8,10 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
   IonButton,
-  IonSpinner,
-  IonSearchbar,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonIcon,
-  IonBadge,
-  IonFooter,
-  IonButtons,
-  IonNote
 } from '@ionic/angular/standalone';
 import { CartFacade } from '../store/cart/cart.facade';
+import { ProductsFacade } from '../store/products/products.facade';
 import { NavigationService } from '../shared/services/navigation/navigation.service';
 
 @Component({
@@ -36,34 +22,21 @@ import { NavigationService } from '../shared/services/navigation/navigation.serv
     CommonModule,
     IonHeader,
     IonToolbar,
-    IonNote,
     IonTitle,
     IonContent,
-    IonButtons,
     IonGrid,
     IonRow,
-    IonCol,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
     IonButton,
-    IonSpinner,
-    IonSearchbar,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonIcon,
-    IonBadge,
-    IonFooter
+    IonCol
   ],
 })
 export class HomePage implements OnInit {
   private readonly navigationService = inject(NavigationService);
   public readonly cartFacade = inject(CartFacade);
+  public readonly productsFacade = inject(ProductsFacade);
 
   ngOnInit() {
+    this.productsFacade.fetchProducts();
   }
 
   start() {
