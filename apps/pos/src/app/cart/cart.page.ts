@@ -42,8 +42,6 @@ export class CartPage implements OnInit, ViewWillEnter {
 
   private readonly cartFacade = inject(CartFacade);
 
-  constructor() { }
-
   ngOnInit() {
   }
 
