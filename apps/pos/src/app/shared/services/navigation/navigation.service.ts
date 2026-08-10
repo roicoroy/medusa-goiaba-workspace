@@ -3,7 +3,14 @@ import { NavigationExtras } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { slideAnimation } from '../animations/nav-animation';
 
-type NavDirection = 'forward' | 'back';
+export type AppRoute = '/home' | '/cart' | string;
+export type NavDirection = 'forward' | 'back' | 'root';
+
+export interface NavigateOptions {
+  direction?: NavDirection;
+  params?: Record<string, unknown>;
+  replaceUrl?: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -11,41 +18,30 @@ type NavDirection = 'forward' | 'back';
 export class NavigationService {
   private navCtrl = inject(NavController);
 
-  async navigateForward(url: string, direction: NavDirection = 'forward') {
-    await this.navCtrl.navigateForward(url, {
+  /** Modern, unified navigation method. */
+  async navigate(url: AppRoute, options?: NavigateOptions) {
+    const direction = options?.direction ?? 'forward';
+    
+    const navOptions = {
+      queryParams: options?.params,
+      replaceUrl: options?.replaceUrl,
       animation: slideAnimation,
       animated: true,
-      animationDirection: direction,
-    });
-  }
-  async navigateForwardParams(
-    url: string,
-    params?: Record<string, unknown>,
-    direction: NavDirection = 'forward',
-  ) {
-    const navigationExtras: NavigationExtras = {
-      queryParams: params,
+      animationDirection: direction === 'root' ? 'forward' : direction,
     };
-    await this.navCtrl.navigateForward(url, {
-      queryParams: navigationExtras.queryParams,
-      animation: slideAnimation,
-      animated: true,
-      animationDirection: direction,
-    });
+
+    if (direction === 'root') {
+      await this.navCtrl.navigateRoot(url, navOptions);
+    } else if (direction === 'back') {
+      await this.navCtrl.navigateBack(url, navOptions);
+    } else {
+      await this.navCtrl.navigateForward(url, navOptions);
+    }
   }
 
-  /** Replace the entire nav stack — use for login→home and logout→login. */
-  async navigateRoot(url: string) {
-    await this.navCtrl.navigateRoot(url, {
-      animation: slideAnimation,
-      animated: true,
-      animationDirection: 'forward',
-    });
-  }
-
-  /** Navigate backward with a horizontal slide animation. */
-  async navigateBack(url: string) {
-    await this.navCtrl.navigateBack(url, {
+  /** Safely pop the stack or go back to a default route. */
+  goBack() {
+    this.navCtrl.back({
       animation: slideAnimation,
       animated: true,
       animationDirection: 'back',

@@ -4,8 +4,6 @@ import { HttpHandler, HttpInterceptor, HttpRequest, HttpEvent } from '@angular/c
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';
-import { AuthState } from 'src/app/store/auth/auth.state';
-import { LanguageState } from 'src/app/store/language/language.state';
 
 @Injectable({
   providedIn: 'root'
@@ -38,15 +36,13 @@ export class MedusaInterceptor implements HttpInterceptor {
       url.includes('localhost:9000') ||
       url.includes('/store/') ||
       url.includes('/auth/');
-    
+
     // SECURITY: Removed debug logging that exposed API endpoints and backend URLs
-    
+
     return isMedusa;
   }
 
   private medusaRequest(request: HttpRequest<any>): HttpRequest<any> {
-    const token = this.store.selectSnapshot(AuthState.getToken);
-
     let headers = request.headers;
 
     // Set Content-Type for JSON requests, but NOT for FormData (file uploads)
@@ -70,18 +66,6 @@ export class MedusaInterceptor implements HttpInterceptor {
       if (!environment.production) {
         console.error('MEDUSA_PUBLISHABLE_KEY is not set in environment - Medusa API requests will fail!');
       }
-    }
-
-    // Add authorization token if available (for authenticated requests)
-    // Note: OPTIONS requests typically don't need auth, but we include it if available
-    if (token && !headers.has('Authorization')) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    // Add Medusa locale header if available
-    const medusaLocale = this.store.selectSnapshot(LanguageState.getMedusaLocale);
-    if (medusaLocale && !headers.has('x-medusa-locale')) {
-      headers = headers.set('x-medusa-locale', medusaLocale);
     }
 
     return request.clone({

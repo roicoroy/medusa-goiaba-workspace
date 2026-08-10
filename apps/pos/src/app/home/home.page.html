@@ -1,5 +1,5 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-title>
       Goiaba POS
     </ion-title>
@@ -9,99 +9,18 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <ion-grid>
     <ion-row>
-      <!-- LEFT SIDE: Product Search and Quick Add -->
-      <ion-col size="12" size-md="8">
-        <ion-searchbar 
-          #searchInput
-          animated="true" 
-          placeholder="Scan barcode or search products..."
-          (ionInput)="onSearchChange($event)"
-          (ionChange)="onSearchChange($event)"
-          (keyup.enter)="onSearchEnter()"
-        ></ion-searchbar>
-
-        <ng-container *ngIf="filteredProducts$ | async as products; else loading">
-          <ion-grid>
-            <ion-row>
-              <ion-col size="12" size-sm="6" size-md="4" size-xl="3" *ngFor="let product of products">
-                <ion-card class="product-card" (click)="addToCart(product)">
-                  <img [src]="product.thumbnail || 'https://ionicframework.com/docs/img/demos/card-media.png'" alt="Product Thumbnail" />
-                  <ion-card-header>
-                    <ion-card-title>{{ product.title }}</ion-card-title>
-                    <ion-card-subtitle *ngIf="product.variants?.[0]?.prices?.[0]">
-                      {{ product.variants[0].prices[0].amount / 100 | currency: product.variants[0].prices[0].currency_code }}
-                    </ion-card-subtitle>
-                  </ion-card-header>
-                </ion-card>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ng-container>
-
-        <ng-template #loading>
-          <div class="loading-container">
-            <ion-spinner name="crescent"></ion-spinner>
-            <p>Loading Products...</p>
-          </div>
-        </ng-template>
-      </ion-col>
-
-      <!-- RIGHT SIDE: Active Cart -->
-      <ion-col size="12" size-md="4">
-        <ion-card class="cart-container">
+      <ion-col>
+        <ion-card>
           <ion-card-header>
-            <ion-card-title>Current Order</ion-card-title>
+            <ion-card-title>Welcome</ion-card-title>
           </ion-card-header>
-
-          <ion-card-content class="cart-content">
-            <ng-container *ngIf="(cartService.items$ | async) as items">
-              <ion-list *ngIf="items.length > 0; else emptyCart">
-                <ion-item *ngFor="let item of items">
-                  <ion-label>
-                    <h2>{{ item.title }}</h2>
-                    <p>{{ item.unitPrice / 100 | currency:'USD' }} x {{ item.quantity }}</p>
-                  </ion-label>
-                  <ion-badge slot="end" color="primary">{{ (item.unitPrice * item.quantity) / 100 | currency:'USD' }}</ion-badge>
-                  <ion-button slot="end" fill="clear" color="danger" (click)="removeFromCart(item)">
-                    Remove
-                  </ion-button>
-                </ion-item>
-              </ion-list>
-
-              <ng-template #emptyCart>
-                <div class="empty-cart-message">
-                  <p>Cart is empty. Scan an item to start.</p>
-                </div>
-              </ng-template>
-            </ng-container>
+          <ion-card-content>
+            <ion-button (click)="start()" expand="block" fill="clear" shape="round">
+              Start
+            </ion-button>
           </ion-card-content>
-
-          <!-- CART FOOTER -->
-          <div class="cart-footer ion-padding" *ngIf="(cartService.total$ | async) as total">
-            <ion-row class="total-row">
-              <ion-col>
-                <h2>Total</h2>
-              </ion-col>
-              <ion-col class="ion-text-right">
-                <h2>{{ total / 100 | currency:'USD' }}</h2>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="6">
-                <ion-button expand="block" color="light" (click)="clearCart()" [disabled]="(cartService.total$ | async) === 0">
-                  Clear
-                </ion-button>
-              </ion-col>
-              <ion-col size="6">
-                <ion-button expand="block" color="success" (click)="checkout()" [disabled]="(cartService.total$ | async) === 0">
-                  Checkout
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </div>
         </ion-card>
       </ion-col>
-
     </ion-row>
   </ion-grid>
 </ion-content>
