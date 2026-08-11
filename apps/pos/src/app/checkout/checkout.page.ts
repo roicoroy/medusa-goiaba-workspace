@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ViewWillEnter } from '@ionic/angular';
 import {
   IonContent,
   IonHeader,
@@ -21,6 +22,7 @@ import {
   IonLabel
 } from '@ionic/angular/standalone';
 import { CartFacade } from '../store/cart/cart.facade';
+import { CheckoutFacade } from '../store/checkout/checkout.facade';
 
 @Component({
   selector: 'app-checkout',
@@ -34,26 +36,24 @@ import { CartFacade } from '../store/cart/cart.facade';
     IonCardContent, IonList, IonItem, IonLabel
   ]
 })
-export class CheckoutPage {
+export class CheckoutPage implements ViewWillEnter {
   private readonly cartFacade = inject(CartFacade);
+  private readonly checkoutFacade = inject(CheckoutFacade);
   private readonly router = inject(Router);
 
-  viewState$ = this.cartFacade.viewState$;
-  selectedPaymentMethod = 'manual'; // In POS, manual (cash) is a common default
+  cartViewState$ = this.cartFacade.viewState$;
+  checkoutViewState$ = this.checkoutFacade.viewState$;
 
-  selectMethod(method: string) {
-    this.selectedPaymentMethod = method;
+  ionViewWillEnter() {
+    this.checkoutFacade.initializeCheckout();
+  }
+
+  selectMethod(providerId: string) {
+    this.checkoutFacade.selectPaymentSession(providerId);
   }
 
   async completeOrder() {
-    console.log('Completing order via Medusa with method:', this.selectedPaymentMethod);
-    // Medusa Boilerplate steps to implement later:
-    // 1. Create Payment Session for cart
-    // 2. Select Payment Session (e.g. 'manual' provider)
-    // 3. Complete Cart
-
-    // For now, clear cart locally and return to home
-    this.cartFacade.clearCart();
+    this.checkoutFacade.completeOrder();
     this.router.navigate(['/home']);
   }
 }

@@ -8,51 +8,72 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-grid *ngIf="viewState$ | async as viewState">
+  <ion-grid>
     <ion-row>
       <!-- Order Summary -->
-      <ion-col size="6">
+      <ion-col size="6" *ngIf="cartViewState$ | async as cartViewState">
         <ion-card>
           <ion-card-header>
             <ion-card-title>Order Summary</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let item of viewState.cart?.items">
+              <ion-item *ngFor="let item of cartViewState.cart?.items">
                 <ion-label>
                   <h2>{{ item.title }}</h2>
                   <p>Qty: {{ item.quantity }}</p>
                 </ion-label>
                 <div slot="end">
-                  {{ (item.total || 0) | currency:viewState.cart?.currency_code }}
+                  {{ (item.total || 0) | currency:cartViewState.cart?.currency_code }}
                 </div>
               </ion-item>
             </ion-list>
             
             <div style="margin-top: 16px; font-size: 1.2rem; font-weight: bold; text-align: right;">
-              Total: {{ (viewState.cart?.total || 0) | currency:viewState.cart?.currency_code }}
+              Total: {{ (cartViewState.cart?.total || 0) | currency:cartViewState.cart?.currency_code }}
             </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
       <!-- Payment Methods -->
-      <ion-col size="6">
+      <ion-col size="6" *ngIf="checkoutViewState$ | async as checkoutViewState">
         <ion-card>
           <ion-card-header>
             <ion-card-title>Select Payment Method</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-list>
-              <ion-item button (click)="selectMethod('manual')" [color]="selectedPaymentMethod === 'manual' ? 'light' : ''">
-                <ion-label>Cash (Manual Provider)</ion-label>
+            
+            <div *ngIf="checkoutViewState.loading" style="padding: 20px; text-align: center;">
+              Loading payment options...
+            </div>
+            
+            <div *ngIf="checkoutViewState.error" style="padding: 20px; color: red;">
+              {{ checkoutViewState.error }}
+            </div>
+
+            <ion-list *ngIf="!checkoutViewState.loading">
+              <ion-item *ngFor="let session of checkoutViewState.paymentSessions" 
+                        button 
+                        (click)="selectMethod(session.provider_id)" 
+                        [color]="checkoutViewState.selectedPaymentSession === session.provider_id ? 'light' : ''">
+                <ion-label style="text-transform: capitalize;">
+                  {{ session.provider_id }}
+                </ion-label>
               </ion-item>
-              <ion-item button (click)="selectMethod('stripe')" [color]="selectedPaymentMethod === 'stripe' ? 'light' : ''">
-                <ion-label>Card Terminal (Stripe)</ion-label>
-              </ion-item>
+              
+              <div *ngIf="checkoutViewState.paymentSessions?.length === 0" style="padding: 20px; text-align: center; color: var(--ion-color-medium);">
+                No payment methods available.
+              </div>
             </ion-list>
 
-            <ion-button expand="block" size="large" color="success" style="margin-top: 32px;" (click)="completeOrder()">
+            <ion-button 
+              expand="block" 
+              size="large" 
+              color="success" 
+              style="margin-top: 32px;" 
+              [disabled]="checkoutViewState.loading || !checkoutViewState.selectedPaymentSession"
+              (click)="completeOrder()">
               Complete Order
             </ion-button>
           </ion-card-content>

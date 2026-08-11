@@ -4,12 +4,14 @@ import { NgxsLoggerPluginOptions } from '@ngxs/logger-plugin';
 
 import { CartState } from './cart/cart.state';
 import { ProductsState } from './products/products.state';
+import { CheckoutState } from './checkout/checkout.state';
 
-export const STATES_MODULES = [CartState, ProductsState];
+export const STATES_MODULES = [CartState, ProductsState, CheckoutState];
 
 export const STORAGE_MODULES = [
   'cart',
-  'products'
+  'products',
+  'checkout'
 ];
 
 export const OPTIONS_CONFIG: Partial<NgxsConfig> = {
