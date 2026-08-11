@@ -31,4 +31,21 @@ export class ProductsApiService {
       map(response => response.products)
     );
   }
+
+  getProductByBarcode(barcode: string): Observable<Product | null> {
+    // Using the 'q' parameter searches title, description, sku, and barcode.
+    // We fetch with fields and then filter locally to ensure an exact barcode match.
+    const url = `${this.apiUrl}?q=${barcode}&fields=+variants.barcode,+variants.sku`;
+    return this.http.get<{ products: Product[] }>(url).pipe(
+      map(response => {
+        console.log('Raw Medusa API response for barcode', barcode, ':', response);
+        const exactMatch = response.products.find(product => 
+          product.variants?.some(variant => variant.barcode === barcode)
+        );
+        console.log('Filtered exact match:', exactMatch);
+        return exactMatch || null;
+      })
+    );
+  }
+
 }

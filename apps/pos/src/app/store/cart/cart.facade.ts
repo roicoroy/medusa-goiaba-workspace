@@ -52,4 +52,8 @@ export class CartFacade {
     updateItemQuantity(lineItemId: string, quantity: number) {
         this.store.dispatch(new CartActions.UpdateItemQuantity(lineItemId, quantity));
     }
+
+    clearCart() {
+        this.store.dispatch(new CartActions.ClearCart());
+    }
 }

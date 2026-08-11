@@ -37,4 +37,8 @@ export class ProductsFacade {
     fetchProducts() {
         this.store.dispatch(new ProductsActions.FetchProducts());
     }
+
+    searchAndAddByBarcode(barcode: string) {
+        this.store.dispatch(new ProductsActions.SearchAndAddByBarcode(barcode));
+    }
 }

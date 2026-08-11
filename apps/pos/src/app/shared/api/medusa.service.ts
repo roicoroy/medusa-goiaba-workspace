@@ -24,7 +24,7 @@ export class MedusaService extends BaseHttpService {
   }
 
   retrieveCart(cartId: string): Observable<any> {
-    return this.get<any>(`/store/carts/${cartId}`);
+    return this.get<any>(`/store/carts/${cartId}?fields=*items,*items.variant`);
   }
 
   addCartLineItem(cartId: string, variant_id: string, quantity: number): Observable<any> {

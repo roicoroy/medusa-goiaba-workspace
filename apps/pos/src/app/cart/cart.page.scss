@@ -1,71 +1,109 @@
+:host {
+  height: 100%;
+}
+
 .pos-grid {
-  height: 80%;
-  position: relative;
-  top: 5%;
-  background: var(--ion-color-step-50, #f4f5f8); // Light background behind the grid
+  height: 100%;
+  background: var(--ion-color-step-50, #f4f5f8);
 }
 
 .pos-row {
   height: 100%;
 }
 
+/* Base structural columns */
 .pos-col-left,
 .pos-col-right {
   display: flex;
   flex-direction: column;
-  height: 100%; // Fix height so both columns stretch evenly
+  height: 100%;
   padding: 12px !important;
   gap: 12px;
 }
 
-// Elegant Box Styling
+/* Reusable elegant box */
 .wire-box {
   background: #ffffff;
   border: 1px solid var(--ion-color-step-150, #d7d8da);
-  border-radius: 12px; // Modern rounded corners
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); // Subtle shadow
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   overflow: hidden;
 }
 
-// Proportions (Left Side)
+/* Left side panels */
 .top-left-box {
-  flex: 3; // roughly 75% height
+  flex-shrink: 0;
 }
 
 .bottom-left-box {
-  flex: 1; // roughly 25% height
+  flex: 1; /* stretches to fill remaining height */
+  overflow-y: auto; /* for the future catalog grid */
 }
 
-// Proportions (Right Side)
-.top-right-box {
-  flex: 1; // roughly 25% height
+/* Right side panels (The Ticket) */
+.ticket-header {
+  flex-shrink: 0;
+  padding: 16px;
+  border-bottom: 1px solid var(--ion-color-step-150, #d7d8da);
+  background: var(--ion-color-light);
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
 }
 
-.middle-right-box {
-  flex: 3; // fill the rest of the height
+.ticket-items {
+  flex: 1; /* Takes all middle space */
+  overflow-y: auto;
+  background: #fff;
 }
 
-// Footer Styling
+.ticket-totals {
+  flex-shrink: 0;
+  padding: 16px;
+  border-top: 1px solid var(--ion-color-step-150, #d7d8da);
+  background: var(--ion-color-light);
+  
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: var(--ion-color-medium);
+  }
+  
+  .totals-row.grand-total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 2px dashed var(--ion-color-step-300, #b3b5b9);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--ion-color-dark);
+    margin-bottom: 0;
+  }
+}
+
+/* Footer Styling */
 .pos-footer {
   border-top: 1px solid #e0e0e0;
-  padding: 8px;
   background: var(--ion-color-light);
 }
 
 .weight-display {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: bold;
   margin: 0;
   color: var(--ion-color-dark);
+  text-align: center;
 }
 
 .footer-pay-button {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  height: 56px;
+  height: 80px;
 }

@@ -36,7 +36,7 @@ export class HomePage implements OnInit {
   public readonly productsFacade = inject(ProductsFacade);
 
   ngOnInit() {
-    this.productsFacade.fetchProducts();
+    // No longer fetching the entire catalog on startup to save memory!
   }
 
   start() {

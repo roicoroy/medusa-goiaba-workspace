@@ -7,27 +7,80 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-no-padding">
+<ion-content class="ion-no-padding">
   <ion-grid class="pos-grid ion-no-padding">
     <ion-row class="pos-row">
 
-      <!-- Left Area (Products/Catalog) -->
-      <ion-col size="8" class="pos-col-left">
-        <div class="wire-box top-left-box">
-          <!-- Main Content Area -->
+      <!-- Left Area (Products/Catalog/Search) -->
+      <ion-col size="7" class="pos-col-left">
+        <div class="wire-box top-left-box" style="padding: 16px; margin-bottom: 12px;"
+          *ngIf="productsViewState$ | async as productsState">
+          <ion-item lines="none" style="--background: transparent; width: 100%;">
+            <ion-input label="Scan Barcode" labelPlacement="floating" [(ngModel)]="barcodeQuery"
+              (keyup.enter)="testSearchBarcode()"></ion-input>
+            <ion-button slot="end" (click)="testSearchBarcode()" [disabled]="productsState.loading"
+              size="large">Search</ion-button>
+          </ion-item>
+
+          <div *ngIf="productsState.error" style="margin-top: 8px; color: var(--ion-color-danger); text-align: center;">
+            {{ productsState.error }}
+          </div>
         </div>
+
         <div class="wire-box bottom-left-box">
-          <!-- Secondary Content Area -->
+          <!-- Future Catalog Grid -->
+          <div
+            style="display: flex; height: 100%; align-items: center; justify-content: center; color: var(--ion-color-medium);">
+            Catalog Area
+          </div>
         </div>
       </ion-col>
 
-      <!-- Right Area (Cart/Checkout) -->
-      <ion-col size="4" class="pos-col-right">
-        <div class="wire-box top-right-box">
-          <!-- Customer/Order Info -->
-        </div>
-        <div class="wire-box middle-right-box">
-          <!-- Cart Items -->
+      <!-- Right Area (Cart/Ticket) -->
+      <ion-col size="5" class="pos-col-right" *ngIf="viewState$ | async as viewState">
+        <div class="wire-box" style="height: 100%;">
+
+          <div class="ticket-header">
+            <h2>Current Order</h2>
+          </div>
+
+          <div class="ticket-items">
+            <div *ngIf="viewState.cart?.items?.length; else emptyCart">
+              <ion-item *ngFor="let item of viewState.cart.items" lines="full">
+                <ion-label class="ion-text-wrap">
+                  <h2 style="font-weight: 600;">{{ item.title }}</h2>
+                  <p style="margin-top: 4px;">{{ item.quantity }} x {{ (item.unit_price || 0) |
+                    currency:viewState.cart.currency_code }}</p>
+                </ion-label>
+                <div slot="end" style="font-weight: bold; font-size: 1.1rem;">
+                  {{ (item.total || 0) | currency:viewState.cart.currency_code }}
+                </div>
+              </ion-item>
+            </div>
+            <ng-template #emptyCart>
+              <div
+                style="padding: 32px 16px; text-align: center; color: var(--ion-color-medium); display: flex; flex-direction: column; align-items: center;">
+                <p style="font-size: 1.1rem;">Cart is empty</p>
+                <p style="font-size: 0.9rem;">Scan a barcode to start</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="ticket-totals" *ngIf="viewState.cart">
+            <div class="totals-row">
+              <span>Subtotal</span>
+              <span>{{ (viewState.cart.subtotal || 0) | currency:viewState.cart.currency_code }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Tax</span>
+              <span>{{ (viewState.cart.tax_total || 0) | currency:viewState.cart.currency_code }}</span>
+            </div>
+            <div class="totals-row grand-total">
+              <span>Total</span>
+              <span>{{ (viewState.cart.total || 0) | currency:viewState.cart.currency_code }}</span>
+            </div>
+          </div>
+
         </div>
       </ion-col>
 
@@ -42,7 +95,7 @@
           <h2 class="weight-display">1000 KG</h2>
         </ion-col>
         <ion-col size="6">
-          <ion-button expand="block" color="primary" class="footer-pay-button">
+          <ion-button (click)="proceedToCheckout()" expand="block" color="primary" class="footer-pay-button">
             PAY
           </ion-button>
         </ion-col>
