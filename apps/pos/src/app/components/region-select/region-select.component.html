@@ -1,0 +1,44 @@
+<ion-item 
+  button 
+  id="region-trigger" 
+  (click)="presentRegionPopover()">
+  <ion-icon name="globe-outline" slot="start"></ion-icon>
+  <ion-label>
+    <ng-container *ngIf="currentRegion$ | async as currentRegion; else loadingRegion">
+      {{ currentRegion.label }} ({{ getCurrencySymbol(currentRegion.currency_code) }})
+    </ng-container>
+    <ng-template #loadingRegion>
+      <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+    </ng-template>
+  </ion-label>
+  <ion-icon name="chevron-down" slot="end"></ion-icon>
+</ion-item>
+
+<!-- Region Selection Popover -->
+<ion-popover #regionPopover trigger="region-trigger" [dismissOnSelect]="true">
+  <ng-template>
+    <ion-content>
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Select Region</ion-label>
+        </ion-list-header>
+        
+        <ion-item 
+          *ngFor="let region of regionList$ | async" 
+          button 
+          (click)="changeRegion(region); regionPopover.dismiss()"
+          [color]="(currentRegion$ | async)?.country === region.country ? 'primary' : ''">
+          <ion-label>
+            <h3>{{ region.label }}</h3>
+            <p>{{ getCurrencySymbol(region.currency_code) }} - {{ region.currency_code.toUpperCase() }}</p>
+          </ion-label>
+          <ion-icon 
+            *ngIf="(currentRegion$ | async)?.country === region.country" 
+            name="checkmark" 
+            slot="end">
+          </ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-popover> 

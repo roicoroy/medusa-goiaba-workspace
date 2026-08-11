@@ -9,10 +9,12 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  IonButtons,
 } from '@ionic/angular/standalone';
 import { CartFacade } from '../store/cart/cart.facade';
 import { ProductsFacade } from '../store/products/products.facade';
 import { NavigationService } from '../shared/services/navigation/navigation.service';
+import { RegionSelectComponent } from '../components/region-select/region-select.component';
 
 @Component({
   selector: 'app-home',
@@ -27,7 +29,9 @@ import { NavigationService } from '../shared/services/navigation/navigation.serv
     IonGrid,
     IonRow,
     IonButton,
-    IonCol
+    IonButtons,
+    IonCol,
+    RegionSelectComponent
   ],
 })
 export class HomePage implements OnInit {

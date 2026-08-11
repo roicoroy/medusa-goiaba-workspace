@@ -9,6 +9,7 @@ import { CartActions } from '../cart/cart.actions';
 
 export interface CheckoutStateModel {
   paymentSessions: any[];
+  paymentCollectionId: string | null;
   selectedPaymentSession: string | null;
   loading: boolean;
   error: string | null;
@@ -18,6 +19,7 @@ export interface CheckoutStateModel {
   name: 'checkout',
   defaults: {
     paymentSessions: [],
+    paymentCollectionId: null,
     selectedPaymentSession: null,
     loading: false,
     error: null
@@ -48,6 +50,11 @@ export class CheckoutState {
     return state.error;
   }
 
+  @Selector()
+  static getPaymentCollectionId(state: CheckoutStateModel) {
+    return state.paymentCollectionId;
+  }
+
   @Action(CheckoutActions.InitializeCheckout)
   initializeCheckout(ctx: StateContext<CheckoutStateModel>) {
     ctx.patchState({ loading: true, error: null });
@@ -64,25 +71,22 @@ export class CheckoutState {
         if (!regions || regions.length === 0) {
           return throwError(() => new Error('No regions configured on the server'));
         }
-        
-        // Select first region for POS (or keep existing if present)
         const regionId = cart.region_id || regions[0].id;
-        
         // Step 2: Update the cart with the region
-        return this.checkoutApi.updateCart(cart.id, { region_id: regionId });
-      }),
-      switchMap((updatedCart) => {
-        // Step 3: Create payment sessions
-        return this.checkoutApi.createPaymentSessions(updatedCart.id);
-      }),
-      tap((cartWithSessions) => {
-        // Update the cart state globally
-        ctx.dispatch(new CartActions.InitializeCart()); // or we could add an UpdateCart action, but this fetches the fresh cart
-        
-        ctx.patchState({
-          paymentSessions: cartWithSessions.payment_sessions || [],
-          loading: false
-        });
+        return this.checkoutApi.updateCart(cart.id, { region_id: regionId }).pipe(
+          switchMap(() => this.checkoutApi.getPaymentProviders(regionId).pipe(
+            switchMap((providers) => this.checkoutApi.createPaymentCollection(cart.id).pipe(
+              tap((paymentCollection) => {
+                ctx.dispatch(new CartActions.InitializeCart());
+                ctx.patchState({
+                  paymentCollectionId: paymentCollection.id,
+                  paymentSessions: providers.map(p => ({ provider_id: p.id })),
+                  loading: false
+                });
+              })
+            ))
+          ))
+        );
       }),
       catchError(error => {
         console.error('Checkout Init Error:', error);
@@ -96,14 +100,14 @@ export class CheckoutState {
   selectPaymentSession(ctx: StateContext<CheckoutStateModel>, { providerId }: CheckoutActions.SelectPaymentSession) {
     ctx.patchState({ loading: true, error: null });
 
-    const cart = this.store.selectSnapshot(CartState.getCart);
-    if (!cart || !cart.id) {
-      ctx.patchState({ loading: false, error: 'No active cart found' });
+    const paymentCollectionId = ctx.getState().paymentCollectionId;
+    if (!paymentCollectionId) {
+      ctx.patchState({ loading: false, error: 'No active payment collection found' });
       return;
     }
 
-    return this.checkoutApi.setPaymentSession(cart.id, providerId).pipe(
-      tap((updatedCart) => {
+    return this.checkoutApi.setPaymentSession(paymentCollectionId, providerId).pipe(
+      tap((updatedCollection) => {
         ctx.patchState({
           selectedPaymentSession: providerId,
           loading: false

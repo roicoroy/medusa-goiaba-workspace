@@ -40,4 +40,8 @@ export class MedusaService extends BaseHttpService {
   deleteCartLineItem(cartId: string, lineId: string): Observable<any> {
     return this.delete<any>(`/store/carts/${cartId}/line-items/${lineId}`);
   }
+
+  regionsList(): Observable<any> {
+    return this.get<any>('/store/regions');
+  }
 }

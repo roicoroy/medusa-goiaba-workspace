@@ -20,15 +20,21 @@ export class CheckoutApiService {
     );
   }
 
-  createPaymentSessions(cartId: string): Observable<any> {
-    return this.http.post<{ cart: any }>(`${this.apiUrl}/store/carts/${cartId}/payment-sessions`, {}).pipe(
-      map(response => response.cart)
+  getPaymentProviders(regionId: string): Observable<any[]> {
+    return this.http.get<{ payment_providers: any[] }>(`${this.apiUrl}/store/payment-providers?region_id=${regionId}`, {}).pipe(
+      map(response => response.payment_providers)
     );
   }
 
-  setPaymentSession(cartId: string, providerId: string): Observable<any> {
-    return this.http.post<{ cart: any }>(`${this.apiUrl}/store/carts/${cartId}/payment-session`, { provider_id: providerId }).pipe(
-      map(response => response.cart)
+  createPaymentCollection(cartId: string): Observable<any> {
+    return this.http.post<{ payment_collection: any }>(`${this.apiUrl}/store/payment-collections`, { cart_id: cartId }).pipe(
+      map(response => response.payment_collection)
+    );
+  }
+
+  setPaymentSession(paymentCollectionId: string, providerId: string): Observable<any> {
+    return this.http.post<{ payment_collection: any }>(`${this.apiUrl}/store/payment-collections/${paymentCollectionId}/payment-sessions`, { provider_id: providerId }).pipe(
+      map(response => response.payment_collection)
     );
   }
 
