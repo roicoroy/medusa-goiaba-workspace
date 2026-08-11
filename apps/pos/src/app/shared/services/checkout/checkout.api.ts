@@ -14,7 +14,7 @@ export class CheckoutApiService {
     );
   }
 
-  updateCart(cartId: string, payload: { region_id?: string; email?: string }): Observable<any> {
+  updateCart(cartId: string, payload: any): Observable<any> {
     return this.http.post<{ cart: any }>(`${this.apiUrl}/store/carts/${cartId}`, payload).pipe(
       map(response => response.cart)
     );
@@ -41,6 +41,18 @@ export class CheckoutApiService {
   completeCart(cartId: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/store/carts/${cartId}/complete`, {}).pipe(
       map(response => response)
+    );
+  }
+
+  getShippingOptions(cartId: string): Observable<any[]> {
+    return this.http.get<{ shipping_options: any[] }>(`${this.apiUrl}/store/shipping-options?cart_id=${cartId}`, {}).pipe(
+      map(response => response.shipping_options)
+    );
+  }
+
+  addShippingMethod(cartId: string, optionId: string): Observable<any> {
+    return this.http.post<{ cart: any }>(`${this.apiUrl}/store/carts/${cartId}/shipping-methods`, { option_id: optionId }).pipe(
+      map(response => response.cart)
     );
   }
 }

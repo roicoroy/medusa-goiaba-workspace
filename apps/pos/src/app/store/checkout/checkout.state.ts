@@ -72,18 +72,42 @@ export class CheckoutState {
           return throwError(() => new Error('No regions configured on the server'));
         }
         const regionId = cart.region_id || regions[0].id;
-        // Step 2: Update the cart with the region
-        return this.checkoutApi.updateCart(cart.id, { region_id: regionId }).pipe(
-          switchMap(() => this.checkoutApi.getPaymentProviders(regionId).pipe(
-            switchMap((providers) => this.checkoutApi.createPaymentCollection(cart.id).pipe(
-              tap((paymentCollection) => {
-                ctx.dispatch(new CartActions.InitializeCart());
-                ctx.patchState({
-                  paymentCollectionId: paymentCollection.id,
-                  paymentSessions: providers.map(p => ({ provider_id: p.id })),
-                  loading: false
-                });
-              })
+        // Step 2: Update the cart with region, dummy email, and dummy address (since POS doesn't need real shipping)
+        const dummyAddress = {
+          first_name: 'POS',
+          last_name: 'Customer',
+          address_1: 'In-Store',
+          city: 'Local',
+          country_code: cart.shipping_address?.country_code || 'dk', // Fallback to DK or current
+          postal_code: '0000',
+          phone: '00000000'
+        };
+
+        return this.checkoutApi.updateCart(cart.id, { 
+          region_id: regionId,
+          email: cart.email || 'pos@store.com',
+          shipping_address: dummyAddress,
+          billing_address: dummyAddress
+        }).pipe(
+          switchMap(() => this.checkoutApi.getShippingOptions(cart.id).pipe(
+            switchMap((shippingOptions) => {
+              if (!shippingOptions || shippingOptions.length === 0) {
+                return throwError(() => new Error('No shipping options available for this region'));
+              }
+              // Step 3: Add the first available shipping method automatically
+              return this.checkoutApi.addShippingMethod(cart.id, shippingOptions[0].id);
+            }),
+            switchMap(() => this.checkoutApi.getPaymentProviders(regionId).pipe(
+              switchMap((providers) => this.checkoutApi.createPaymentCollection(cart.id).pipe(
+                tap((paymentCollection) => {
+                  ctx.dispatch(new CartActions.InitializeCart());
+                  ctx.patchState({
+                    paymentCollectionId: paymentCollection.id,
+                    paymentSessions: providers.map(p => ({ provider_id: p.id })),
+                    loading: false
+                  });
+                })
+              ))
             ))
           ))
         );
@@ -122,16 +146,22 @@ export class CheckoutState {
 
   @Action(CheckoutActions.CompleteOrder)
   completeOrder(ctx: StateContext<CheckoutStateModel>) {
-    // The user specifically asked to skip the final completion for now.
-    // We will simulate it and reset the cart.
     ctx.patchState({ loading: true, error: null });
-    console.log('Would call completeCart API here, but skipping for now as per instructions.');
     
-    // Simulate successful order completion
-    return of({ success: true }).pipe(
-      tap(() => {
+    const cart = this.store.selectSnapshot(CartState.getCart);
+    if (!cart || !cart.id) {
+      ctx.patchState({ loading: false, error: 'No active cart found' });
+      return;
+    }
+
+    return this.checkoutApi.completeCart(cart.id).pipe(
+      tap((response) => {
         ctx.patchState({ loading: false });
         ctx.dispatch(new CartActions.ClearCart());
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(() => error);
       })
     );
   }
